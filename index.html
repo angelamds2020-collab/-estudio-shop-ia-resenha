@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0a0a0d">
+<title>Estúdio Shop IA</title>
+<style>
+:root{--bg:#0a0a0d;--panel:#15151c;--cyan:#22e8e0;--pink:#ff2e6d;--txt:#f7f7fb;--muted:#aaaaba}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:Arial,sans-serif;padding:18px;max-width:760px;margin:auto}
+header{text-align:center;padding:22px 0}
+.logo{font-size:28px;font-weight:900;letter-spacing:-1px}
+.logo span{color:var(--cyan)}
+header p{color:var(--muted);font-size:14px}
+h2{font-size:17px;margin:20px 0 10px}
+.panel{background:var(--panel);border:1px solid #292933;border-radius:16px;padding:16px;margin-bottom:15px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 6px}
+input,select,textarea{width:100%;padding:13px;border-radius:10px;border:1px solid #383844;background:#0e0e13;color:white;font:inherit;font-size:15px}
+textarea{min-height:90px;resize:vertical}
+button{border:0;border-radius:11px;padding:13px;font-weight:bold;font-size:14px;cursor:pointer}
+.primary{width:100%;background:var(--cyan);color:#071010;margin-top:15px}
+.secondary{background:#292934;color:white}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.actions button{flex:1}
+.result{white-space:pre-wrap;line-height:1.55;font-size:14px;overflow-wrap:anywhere}
+.small{font-size:12px;color:var(--muted);line-height:1.5}
+.tag{display:inline-block;color:var(--cyan);border:1px solid #245b5b;border-radius:20px;padding:6px 10px;font-size:12px;margin:3px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">ESTÚDIO <span>SHOP IA</span></div>
+<p>Seu laboratório de roteiros que vendem</p>
+<span class="tag">TikTok Shop</span>
+<span class="tag">Shopee</span>
+<span class="tag">100% no navegador</span>
+</header>
+
+<section class="panel">
+<h2>✦ Crie seu conteúdo</h2>
+<label for="product">Qual é o produto?</label>
+<input id="product" placeholder="Ex.: tênis, garrafa, vestido, panela">
+
+<label for="category">Categoria</label>
+<select id="category">
+<option>Moda feminina</option><option>Moda masculina</option>
+<option>Calçados</option><option>Beleza e unhas</option>
+<option>Casa e cozinha</option><option>Infantil</option>
+<option>Acessórios</option><option>Eletrônicos</option>
+<option>Fitness</option><option>Outro produto</option>
+</select>
+
+<label for="platform">Onde vai publicar?</label>
+<select id="platform"><option>TikTok Shop</option><option>Shopee</option><option>TikTok e Shopee</option></select>
+
+<label for="style">Estilo do vídeo</label>
+<select id="style">
+<option>UGC natural</option><option>POV</option>
+<option>Amiga contando uma fofoca</option>
+<option>Demonstração do produto</option>
+<option>Unboxing</option><option>Comercial direto</option>
+<option>Storytelling</option><option>Vídeo viral com gancho</option>
+</select>
+
+<label for="person">Como mostrar?</label>
+<select id="person">
+<option>Sem rosto, mostrando mãos ou produto</option>
+<option>Somente o produto</option>
+<option>Pessoa sem mostrar o rosto</option>
+<option>Pessoa falando para a câmera</option>
+</select>
+
+<label for="voice">Narração</label>
+<select id="voice">
+<option>Voz brasileira natural</option>
+<option>Voz feminina brasileira</option>
+<option>Voz masculina brasileira</option>
+<option>Sem voz, somente sons naturais</option>
+</select>
+
+<label for="duration">Duração desejada</label>
+<select id="duration"><option>10 segundos</option><option>15 segundos</option><option>20 segundos</option><option>30 segundos</option></select>
+
+<label for="details">Detalhes reais do produto (opcional)</label>
+<textarea id="details" placeholder="Material, benefícios comprovados, características..."></textarea>
+
+<button class="primary" onclick="generate()">✦ GERAR MEU ROTEIRO</button>
+<p class="small">O gerador funciona sem assinatura ou chave de API. Os resultados são modelos editáveis, não uma conexão com um serviço externo de IA.</p>
+</section>
+
+<section class="panel">
+<h2>✧ Seu roteiro pronto</h2>
+<div id="result" class="result">Seu roteiro aparecerá aqui depois que você tocar em “Gerar meu roteiro”.</div>
+<div class="actions">
+<button class="secondary" onclick="copyResult()">Copiar roteiro</button>
+<button class="secondary" onclick="makePrompt()">Criar prompt de vídeo</button>
+</div>
+</section>
+
+<section class="panel">
+<h2>⌘ Prompt para vídeo com IA</h2>
+<div id="prompt" class="result">Gere um roteiro e depois toque em “Criar prompt de vídeo”.</div>
+<div class="actions">
+<button class="secondary" onclick="copyPrompt()">Copiar prompt</button>
+</div>
+</section>
+
+<section class="panel">
+<h2># Hashtags sugeridas</h2>
+<div id="hashtags" class="result">#TikTokShop #Achadinhos #OfertaDoDia #Shopee</div>
+<div class="actions">
+<button class="secondary" onclick="copyHashtags()">Copiar hashtags</button>
+</div>
+</section>
+
+<footer>Estúdio Shop IA • Ferramenta independente para criação de conteúdo</footer>
+
+<script>
+let currentScript="";
+let currentPrompt="";
+function val(id){return document.getElementById(id).value.trim()}
+function generate(){
+ const product=val("product")||"este produto";
+ const category=val("category");
+ const style=val("style");
+ const person=val("person");
+ const voice=val("voice");
+ const duration=val("duration");
+ const details=val("details");
+ const silent=voice.startsWith("Sem voz");
+ const hooks=[
+ "Olha esse achadinho que eu encontrei!",
+ "Amiga, dá uma olhada nisso aqui!",
+ "Se você procura algo assim, presta atenção!",
+ "Olha só esse detalhe desse produto!",
+ "Vim te mostrar uma opção que merece sua atenção!"
+ ];
+ const hook=hooks[Math.floor(Math.random()*hooks.length)];
+ const demo=details?("O destaque é: "+details+"."):"Mostre os detalhes, o acabamento e como o produto é usado, sem inventar características.";
+ const middle=style==="Amiga contando uma fofoca"
+ ?"Amiga, precisava te mostrar isso! Olha os detalhes e me diz se você também gostou."
+ :style==="POV"
+ ?"POV: você encontra "+product+" e resolve mostrar cada detalhe de pertinho."
+ :style==="Unboxing"
+ ?"Vamos ver de perto? Mostre a embalagem e depois os detalhes reais do produto."
+ :style==="Storytelling"
+ ?"Sabe quando você está procurando algo desse tipo? Olha essa opção e os detalhes."
+ :"Mostre "+product+" de perto, com movimentos naturais e foco nos detalhes reais.";
+ const cta="Confira os detalhes e o preço na vitrine antes de decidir.";
+ const script= silent
+ ? "CENA 1 — GANCHO (0–3 s): "+product+" em destaque, com movimento suave.\n\nCENA 2 — DEMONSTRAÇÃO (3–"+Math.max(5,Math.floor(parseInt(duration)/2))+" s): "+middle+" "+demo+"\n\nCENA 3 — FINAL: Mostre o produto inteiro e finalize com uma tomada estável. Sem narração; use sons naturais."
+ : "GANCHO: "+hook+"\n\nDESENVOLVIMENTO: "+middle+" "+demo+"\n\nCTA: "+cta+"\n\nDIREÇÃO: "+duration+", português brasileiro natural, ritmo dinâmico e movimentos de câmera suaves.";
+ currentScript="PRODUTO: "+product+"\nCATEGORIA: "+category+"\nESTILO: "+style+"\n\n"+script;
+ document.getElementById("result").textContent=currentScript;
+ const words=product.toLowerCase().replace(/[^a-záàâãéêíóôõúç0-9 ]/gi,"").split(/\s+/).filter(Boolean);
+ const tags=["#TikTokShop","#Shopee","#Achadinhos",...words.slice(0,2).map(w=>"#"+w),"#DicaDeCompra"];
+ document.getElementById("hashtags").textContent=[...new Set(tags)].join(" ");
+ currentPrompt="";
+ document.getElementById("prompt").textContent="Toque em “Criar prompt de vídeo” para montar o prompt.";
+}
+function makePrompt(){
+ const product=val("product")||"produto";
+ const details=val("details")||"preservar todos os detalhes visíveis da referência";
+ currentPrompt="Create a realistic vertical 9:16 product video, "+val("duration")+". Product: "+product+". Style: "+val("style")+". Presentation: "+val("person")+". Narration: "+val("voice")+". Details to preserve: "+details+". Keep the product faithful to its reference image. Do not invent logos, text, features, accessories, colors, or parts. Natural handheld smartphone camera, realistic lighting, smooth believable movements, clear product focus, no subtitles, no watermark. If narration is enabled, use natural Brazilian Portuguese. Follow this script:\n"+currentScript+"\nDo not make unsupported claims.";
+ document.getElementById("prompt").textContent=currentPrompt;
+}
+async function copyText(text){
+ if(!text){alert("Gere o conteúdo primeiro.");return}
+ try{await navigator.clipboard.writeText(text);alert("Copiado!")}
+ catch(e){
+  const t=document.createElement("textarea");t.value=text;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();alert("Copiado!");
+ }
+}
+function copyResult(){copyText(currentScript)}
+function copyPrompt(){copyText(currentPrompt)}
+function copyHashtags(){copyText(document.getElementById("hashtags").textContent)}
+</script>
+</body>
+</html>
