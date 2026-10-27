@@ -1,5 +1,3 @@
-HTML
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -38,7 +36,6 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
 
 <section class="panel">
 <h2>01 · Configurar roteiro</h2>
-
 <label for="product">Nome do produto *</label>
 <input id="product" placeholder="Ex.: tênis masculino">
 
@@ -72,10 +69,17 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
 </select>
 
 <label for="duration">Duração do vídeo</label>
-<select id="duration"><option>10</option><option>15</option><option>20</option></select>
+<select id="duration">
+<option value="10">10 segundos</option>
+<option value="15">15 segundos</option>
+<option value="20">20 segundos</option>
+</select>
 
 <label for="voice">Narração</label>
-<select id="voice"><option value="yes">Com fala em português brasileiro</option><option value="no">Sem fala</option></select>
+<select id="voice">
+<option value="yes">Com fala em português brasileiro</option>
+<option value="no">Sem fala</option>
+</select>
 
 <label for="person">Aparência da cena</label>
 <select id="person">
@@ -86,7 +90,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
 </select>
 
 <button class="primary" onclick="generate()">✦ GERAR ROTEIRO</button>
-<p class="small">O gerador funciona no próprio aplicativo, sem API ou créditos de IA.</p>
+<p class="small">Geração local, sem API ou créditos de IA. Os textos são montados a partir de modelos predefinidos.</p>
 </section>
 
 <section class="panel">
@@ -125,64 +129,147 @@ direto:["Olha esse produto que encontrei!","Vem conhecer essa opção!","Se voc�
 desejo:["Tem coisas que deixam a rotina mais prática!","Olha essa ideia que pode combinar com você!","Quem gosta de praticidade vai entender!"]
 };
 
-function val(id){return document.getElementById(id).value.trim()}
+function val(id){
+ return document.getElementById(id).value.trim();
+}
 
 function generate(){
- const product=val("product");
- if(!product){alert("Digite o nome do produto primeiro.");document.getElementById("product").focus();return}
-
- const details=val("details")||"Mostre os detalhes reais do produto, sem inventar características.";
- const category=val("category");
- const style=val("style");
- const duration=Number(val("duration"));
- const voice=val("voice")==="yes";
- const environment=val("environment");
- const person=val("person");
- const hookList=hooks[style]||hooks.curiosidade;
- const hook=hookList[variation%hookList.length];
- variation++;
-
- let script;
- if(voice){
-  if(duration===10){
-   script=`0–3s | GANCHO\n"${hook}"\n\n3–7s | DEMONSTRAÇÃO\n"Olha esse ${product}! ${details}"\n\n7–10s | CTA\n"Confira os detalhes no carrinho e veja se combina com você."`;
-  }else if(duration===15){
-   script=`0–3s | GANCHO\n"${hook}"\n\n3–10s | DEMONSTRAÇÃO\n"Esse é o ${product}. ${details}"\n\n10–15s | CTA\n"Gostou? Confira as informações do produto no carrinho!"`;
-  }else{
-   script=`0–4s | GANCHO\n"${hook}"\n\n4–9s | CONTEXTO\n"Hoje eu vim mostrar o ${product}."\n\n9–16s | DEMONSTRAÇÃO\n"${details}"\n\n16–20s | CTA\n"Confira os detalhes e veja se essa opção é para você."`;
-  }
- }else{
-  script=`VÍDEO SEM NARRAÇÃO · ${duration} SEGUNDOS\n\nINÍCIO: Apresente ${product} com um enquadramento atraente.\n\nMEIO: Demonstre os detalhes reais com movimentos naturais.\n\nFINAL: Termine com o produto em destaque.\n\nSem fala ou narração. Use apenas sons ambientes suaves.`;
+ const product = val("product");
+ if(!product){
+  alert("Digite o nome do produto primeiro.");
+  document.getElementById("product").focus();
+  return;
  }
 
- document.getElementById("result").textContent=
- `PRODUTO: ${product}\nCATEGORIA: ${category}\n\n${script}\n\nImportante: não faça afirmações que não possam ser comprovadas.`;
+ const details = val("details") || "Mostre os detalhes reais do produto, sem inventar características.";
+ const category = val("category");
+ const style = val("style");
+ const duration = Number(val("duration"));
+ const voice = val("voice") === "yes";
+ const environment = val("environment");
+ const person = val("person");
+ const hookList = hooks[style] || hooks.curiosidade;
+ const hook = hookList[variation % hookList.length];
+ variation++;
 
- const narration=voice
- ?`Use narração natural em português brasileiro. Fale exatamente o texto do roteiro, com sincronização labial somente se houver uma pessoa falando em cena.`
- :"Não use fala, voz, diálogos ou narração.";
+ let script = "";
 
- document.getElementById("prompt").textContent=
- `Create a ${duration}-second product video in vertical 9:16 format, suitable for TikTok, Reels and YouTube Shorts.\n\nPRODUCT: ${product}\nCATEGORY: ${category}\nDETAILS: ${details}\nENVIRONMENT: ${environment}\nSCENE: ${person}\n\nVISUAL STYLE: Ultra-realistic smartphone UGC video, natural soft lighting, realistic textures, natural camera movements, detailed close-ups and believable physics.\n\nPRODUCT REFERENCE IS ABSOLUTE LAW — ZERO ALTERATIONS ALLOWED. Preserve the exact product from the supplied reference image, including shape, color, material, proportions and existing details. Do not invent logos or features.\n\n${narration}\n\nVIDEO SCRIPT:\n${script}\n\nAvoid distorted hands, extra fingers, changing the product, false demonstrations, watermarks and unnecessary on-screen text.`;
+ if(voice){
+  if(duration === 10){
+   script = `0–3s | GANCHO
+"${hook}"
 
- document.getElementById("caption").textContent=
- `${product}: uma opção para conhecer de perto! ✨\nConfira os detalhes do produto e veja se combina com você.\n\n#TikTokShop #Achadinhos #DicasDeCompras #${category.replace(/[^a-zA-Z0-9]/g,"")}`;
+3–7s | DEMONSTRAÇÃO
+"Olha esse ${product}! ${details}"
+
+7–10s | CTA
+"Confira os detalhes no carrinho e veja se combina com você."`;
+  }else if(duration === 15){
+   script = `0–3s | GANCHO
+"${hook}"
+
+3–10s | DEMONSTRAÇÃO
+"Esse é o ${product}. ${details}"
+
+10–15s | CTA
+"Gostou? Confira as informações do produto no carrinho!"`;
+  }else{
+   script = `0–4s | GANCHO
+"${hook}"
+
+4–9s | CONTEXTO
+"Hoje eu vim mostrar o ${product}."
+
+9–16s | DEMONSTRAÇÃO
+"${details}"
+
+16–20s | CTA
+"Confira os detalhes e veja se essa opção é para você."`;
+  }
+ }else{
+  script = `VÍDEO SEM NARRAÇÃO · ${duration} SEGUNDOS
+
+INÍCIO: Apresente ${product} com um enquadramento atraente.
+
+MEIO: Demonstre os detalhes reais com movimentos naturais.
+
+FINAL: Termine com o produto em destaque.
+
+Sem fala ou narração. Use apenas sons ambientes suaves.`;
+ }
+
+ document.getElementById("result").textContent =
+ `PRODUTO: ${product}
+CATEGORIA: ${category}
+
+${script}
+
+Importante: não faça afirmações que não possam ser comprovadas.`;
+
+ const narration = voice
+ ? "Use narração natural em português brasileiro. Fale o roteiro exatamente como escrito. Não invente falas adicionais."
+ : "Não use fala, voz, diálogos ou narração.";
+
+ document.getElementById("prompt").textContent =
+ `Create a ${duration}-second product video in vertical 9:16 format, suitable for TikTok, Reels and YouTube Shorts.
+
+PRODUCT: ${product}
+CATEGORY: ${category}
+DETAILS: ${details}
+ENVIRONMENT: ${environment}
+SCENE: ${person}
+
+VISUAL STYLE: Ultra-realistic smartphone UGC video, natural soft lighting, realistic textures, natural camera movements, detailed close-ups and believable physics.
+
+PRODUCT REFERENCE IS ABSOLUTE LAW — ZERO ALTERATIONS ALLOWED. Preserve the exact product from the supplied reference image, including shape, color, material, proportions and existing details. Do not invent logos or features.
+
+${narration}
+
+VIDEO SCRIPT:
+${script}
+
+Avoid distorted hands, extra fingers, changing the product, false demonstrations, watermarks and unnecessary on-screen text.`;
+
+ const safeCategory = category.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-zA-Z0-9]/g,"");
+
+ document.getElementById("caption").textContent =
+ `${product}: uma opção para conhecer de perto! ✨
+Confira os detalhes do produto e veja se combina com você.
+
+#TikTokShop #Achadinhos #DicasDeCompras #${safeCategory}`;
+
+ document.getElementById("result").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
 async function copyOutput(id){
- const text=document.getElementById(id).textContent;
- if(!text||text.includes("aparecerá aqui")){alert("Gere o conteúdo primeiro.");return}
+ const element = document.getElementById(id);
+ const content = element.textContent;
+
+ if(!content || content.includes("aparecerá aqui")){
+  alert("Gere o conteúdo primeiro.");
+  return;
+ }
+
  try{
-  await navigator.clipboard.writeText(text);
+  await navigator.clipboard.writeText(content);
   alert("Copiado com sucesso!");
- }catch(e){
-  const area=document.createElement("textarea");
-  area.value=text;
+ }catch(error){
+  const area = document.createElement("textarea");
+  area.value = content;
+  area.style.position = "fixed";
+  area.style.opacity = "0";
   document.body.appendChild(area);
   area.select();
-  const ok=document.execCommand("copy");
+
+  let copied = false;
+  try{
+   copied = document.execCommand("copy");
+  }catch(e){}
+
   area.remove();
-  alert(ok?"Copiado com sucesso!":"Não foi possível copiar. Selecione o texto e copie manualmente.");
+  alert(copied
+   ? "Copiado com sucesso!"
+   : "Não foi possível copiar. Selecione o texto e copie manualmente.");
  }
 }
 </script>
